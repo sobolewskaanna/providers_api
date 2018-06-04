@@ -1,7 +1,7 @@
 class ProvidersController < ApplicationController
   def index
-    @summaries = if valid_params.blank?
-                   # query for params here
+    @summaries = if valid_params.present?
+                   Summary.execute_custom_query(@valid_params)
                  else
                    Summary.all
                  end
@@ -10,7 +10,7 @@ class ProvidersController < ApplicationController
   private
 
   def valid_params
-    params.permit(
+    @valid_params ||= params.permit(
       :max_discharges,
       :min_discharges,
       :max_average_covered_charges,
