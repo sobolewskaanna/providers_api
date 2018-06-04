@@ -5,34 +5,71 @@ RSpec.describe 'Providers API', type: :request do
   let!(:provider_two) { create :provider_with_summaries, provider_id: 1002 }
 
   describe 'GET /providers' do
-    before { get '/providers' }
+    context 'without params' do
+      before { get '/providers' }
 
-    it 'returns status code 200' do
-      expect(response.status).to eq(200)
+      it 'returns status code 200' do
+        expect(response.status).to eq(200)
+      end
+
+      it 'returns all providers' do
+        json_response = JSON.parse(response.body)
+
+        expect(json_response).not_to be_empty
+        expect(json_response.count).to eq(20)
+      end
+
+      it 'returns json in correct format' do
+        json_response = JSON.parse(response.body)
+
+        expect(json_response.first).to eq(
+          'Provider Name' => 'SOUTHEAST ALABAMA MEDICAL CENTER',
+          'Provider Street Address' => '1108 ROSS CLARK CIRCLE',
+          'Provider City' => 'San Francisco',
+          'Provider State' => 'CA',
+          'Provider Zip Code' => 94_103,
+          'Hospital Referral Region Description' => 'CA - San Francisco',
+          'Total Discharges' => 91,
+          'Average Covered Charges' => '$21,096.94',
+          'Average Total Payments' => '$8,148.67',
+          'Average Medicare Payments' => '$7,403.25'
+        )
+      end
     end
 
-    it 'returns all providers' do
-      json_response = JSON.parse(response.body)
+    context 'with valid params' do
+      it 'defines permitted params' do
+        expect_any_instance_of(ActionController::Parameters)
+          .to receive(:permit)
+          .with(
+            :max_discharges,
+            :min_discharges,
+            :max_average_covered_charges,
+            :min_average_covered_charges,
+            :max_average_medicare_payments,
+            :min_average_medicare_payments,
+            :state
+          ).and_call_original
 
-      expect(json_response).not_to be_empty
-      expect(json_response.count).to eq(20)
+        get '/providers?max_discharges=600'
+      end
     end
 
-    it 'returns json in correct format' do
-      json_response = JSON.parse(response.body)
+    context 'with invalid params' do
+      it 'returns a successful response' do
+        get '/providers?boop=beep'
 
-      expect(json_response.first).to eq(
-        'Provider Name' => 'SOUTHEAST ALABAMA MEDICAL CENTER',
-        'Provider Street Address' => '1108 ROSS CLARK CIRCLE',
-        'Provider City' => 'San Francisco',
-        'Provider State' => 'CA',
-        'Provider Zip Code' => 94_103,
-        'Hospital Referral Region Description' => 'CA - San Francisco',
-        'Total Discharges' => 91,
-        'Average Covered Charges' => '$21,096.94',
-        'Average Total Payments' => '$8,148.67',
-        'Average Medicare Payments' => '$7,403.25'
-      )
+        expect(response.status).to eq(200)
+      end
+
+      it 'returns all providers' do
+        get '/providers?boop=beep'
+
+        json_response = JSON.parse(response.body)
+
+        expect(json_response).not_to be_empty
+        expect(json_response.count).to eq(20)
+      end
     end
   end
 end
