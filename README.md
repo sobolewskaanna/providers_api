@@ -37,6 +37,6 @@ The database is composed of two tables: a provider and summary. The provider tab
 The charges for each provider are stored in cents. `money-rails` gem is used to correctly present the data.
 
 #### Further work to be done:
-Create a model for DRG Definition with a code and corresponding definition.
-Add test for Seed file to make sure that all of the data was seeded correctly.
-Update the seed file to account for nil data and data with unexpected characters.
+* Create a model for DRG Definition with a code and corresponding definition.
+* Add test for Seed file to make sure that all of the data was seeded correctly.
+* Update the seed file to account for nil data and data with unexpected characters.
