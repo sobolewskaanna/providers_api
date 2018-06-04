@@ -15,5 +15,11 @@ FactoryBot.define do
     state 'CA'
     zip_code 94_103
     hospital_referral_region_description 'CA - San Francisco'
+
+    factory :provider_with_summaries do
+      after(:create) do |provider|
+        create_list(:summary, 10, provider: provider)
+      end
+    end
   end
 end
