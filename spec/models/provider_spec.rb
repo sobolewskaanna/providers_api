@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Provider, type: :model do
+  context 'associations' do
+    it { is_expected.to have_many(:summaries) }
+  end
+
   context 'validations' do
     subject { build :provider }
 

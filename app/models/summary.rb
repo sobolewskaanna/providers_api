@@ -1,4 +1,6 @@
 class Summary < ApplicationRecord
+  belongs_to :provider
+
   validates :drg_definition, presence: true
   validates :total_discharges, presence: true
   validates :average_covered_charges, presence: true
